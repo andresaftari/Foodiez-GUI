@@ -3,16 +3,11 @@ package view.admin;
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 import controller.DBConn;
 import controller.Foodiez;
-import model.TemporaryModel;
-import model.Transaction;
-import view.auth.Login;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
-import java.sql.*;
-import java.util.ArrayList;
 
 import static java.awt.EventQueue.invokeLater;
 import static java.util.logging.Level.SEVERE;
@@ -62,110 +57,7 @@ public class TransAdminMain extends JFrame {
         columnModel.getColumn(1).setCellRenderer(cellRenderer);
         columnModel.getColumn(2).setCellRenderer(cellRenderer);
 
-        this.loadData();
-    }
-
-    private void loadData() {
-        try {
-            ArrayList<TemporaryModel> tempList = new ArrayList<>();
-
-            String order_code;
-            int id_m_user, id_m_product;
-
-            Connection conn = data.getConnection();
-            String getQuery = "SELECT * FROM m_transaction";
-
-            Statement state = conn.createStatement();
-            ResultSet rset = state.executeQuery(getQuery);
-
-            while (rset.next()) {
-                order_code = rset.getString("order_code");
-                id_m_user = rset.getInt("id_m_user");
-                id_m_product = rset.getInt("id_m_product");
-
-                tempList.add(new TemporaryModel(order_code, id_m_user, id_m_product));
-            }
-
-            tempList.forEach(it -> {
-                try {
-                    String username, productname;
-                    String getData = "SELECT m_user.user_name, m_product.product_name " +
-                            "FROM m_user, m_product " +
-                            "WHERE m_user.id=? AND m_product.id=?";
-
-                    PreparedStatement ps = conn.prepareStatement(getData );
-                    ps.setInt(1, it.getId_m_user());
-                    ps.setInt(2, it.getId_m_product());
-
-                    ResultSet dataset = ps.executeQuery();
-
-                    while (dataset.next()) {
-                        username = dataset.getString("user_name");
-                        productname = dataset.getString("product_name");
-
-                        foodiez.addTransaction(new Transaction(it.getOrder_code(), username, productname));
-
-                        int index = foodiez.getTransactionList().size() - 1;
-
-                        tableModel.addRow(new Object[]{
-                                foodiez.getTransactionList().get(index).getOrder_code(),
-                                foodiez.getTransactionList().get(index).getUsername(),
-                                foodiez.getTransactionList().get(index).getProduct_name()
-                        });
-                    }
-                } catch (SQLException e) {
-                    System.out.println(e.getMessage());
-                }
-            });
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
-    private void authorizationCheck() {
-        try {
-            Connection conn = data.getConnection();
-            String getQuery = "SELECT * FROM m_user WHERE user_name=?";
-
-            PreparedStatement ps = conn.prepareStatement(getQuery);
-            ps.setString(1, current_user);
-
-            // Database connections
-            ResultSet rs = ps.executeQuery();
-            int user_state = 0;
-
-            while (rs.next()) {
-                user_state = rs.getInt("status");
-            }
-
-            if (current_user == null || current_user.equals("") || current_user.equals("null") || user_state == 0) {
-                JOptionPane.showMessageDialog(
-                        this,
-                        "Akses ditolak karena Anda belum melakukan login sebagai Admin!",
-                        "Authorization Check",
-                        JOptionPane.WARNING_MESSAGE
-                );
-                this.goToLogin();
-            } else if (user_state == 2) {
-                JOptionPane.showMessageDialog(
-                        this,
-                        "Akses ditolak karena akun Anda sedang di-suspend!",
-                        "Authorization Check",
-                        JOptionPane.WARNING_MESSAGE
-                );
-                this.goToLogin();
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
-    private void goToLogin() {
-        Login login = new Login();
-
-        this.dispose();
-        login.setSize(1920, 1080);
-        login.setVisible(true);
+        foodiez.loadTransactionData(tableModel);
     }
 
     @SuppressWarnings("unchecked")
@@ -346,28 +238,12 @@ public class TransAdminMain extends JFrame {
 
     private void btnLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogoutActionPerformed
         try {
-            Connection conn = data.getConnection();
-            String getQuery = "SELECT * FROM m_user WHERE user_name=?";
-
-            PreparedStatement ps = conn.prepareStatement(getQuery);
-            ps.setString(1, current_user);
-
-            // Database connections
-            ps.executeQuery();
-            String updateQuery = "UPDATE m_user SET status = 0 WHERE user_name=?";
-
-            PreparedStatement pstate = conn.prepareStatement(updateQuery);
-            pstate.setString(1, current_user);
-            pstate.executeUpdate();
-
-            JOptionPane.showMessageDialog(
+            foodiez.logoutAccount(
                     this,
-                    current_user + " berhasil logout!",
-                    "Admin Page",
-                    1
+                    this,
+                    current_user
             );
-            this.goToLogin();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }//GEN-LAST:event_btnLogoutActionPerformed
@@ -414,7 +290,7 @@ public class TransAdminMain extends JFrame {
             app.setSize(1920, 1080);
             app.setVisible(true);
             app.setVisible(true);
-            app.authorizationCheck();
+            app.foodiez.authorizationCheck(app, app, current_user);
         });
     }
 

@@ -3,13 +3,8 @@ package view.auth;
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 import controller.DBConn;
 import controller.Foodiez;
-import model.Admin;
-import model.Customer;
-import model.User;
 
 import javax.swing.*;
-import java.sql.*;
-import java.util.Random;
 
 import static java.awt.EventQueue.invokeLater;
 import static java.util.logging.Level.SEVERE;
@@ -22,62 +17,14 @@ import static javax.swing.UIManager.*;
 public class Register extends JFrame {
 
     private static final Foodiez foodiez = new Foodiez();
-    private MysqlDataSource data = new MysqlDataSource();
 
     public Register() {
         DBConn dbconn = new DBConn();
+        MysqlDataSource data = new MysqlDataSource();
         dbconn.db_connection(data);
 
         // Check database connection
-        try {
-            Connection conn = data.getConnection();
-            String getQuery = "SELECT * FROM m_user";
-
-            System.out.println("Debug message: Connection successfull!\n");
-
-            // Database connections
-            Statement state = conn.createStatement();
-            ResultSet rset = state.executeQuery(getQuery);
-
-            while (rset.next()) {
-                String name = rset.getString("user_name");
-                String pass = rset.getString("user_pass");
-                String address = rset.getString("user_address");
-                int type = rset.getInt("user_type");
-                String phone = rset.getString("user_phone");
-                int token = rset.getInt("auth_token");
-
-                System.out.format("%s, %s, %s, %d, %s, %d\n", name, pass, address, type, phone, token);
-                if (type == 1) {
-                    foodiez.addUser(
-                            new Admin(
-                                    name,
-                                    pass,
-                                    address,
-                                    phone,
-                                    token,
-                                    0,
-                                    1,
-                                    0
-                            ));
-                } else if (type == 2) {
-                    foodiez.addUser(
-                            new Customer(
-                                    name,
-                                    pass,
-                                    address,
-                                    phone,
-                                    0,
-                                    0,
-                                    2,
-                                    0
-                            ));
-                }
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-
+        foodiez.databaseConnectionCheck();
         initComponents();
     }
 
@@ -284,286 +231,16 @@ public class Register extends JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnRegisterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegisterActionPerformed
-        try {
-            String username = "";
-            Connection conn = data.getConnection();
-            String getQuery = "SELECT * FROM m_user";
-
-            if (!foodiez.getUserList().isEmpty()) {
-                // Database connections
-                Statement state = conn.createStatement();
-                ResultSet rset = state.executeQuery(getQuery);
-
-                if (rset.next()) {
-                    username = rset.getString("user_name");
-                }
-
-                // Check if user name is already exist or not
-                if (textName.getText().equals(username)) {
-                    String message = "Username sudah digunakan!";
-                    validation(message);
-                } else {
-                    // Validate all form data
-                    if (textName.getText().equals("Silakan masukkan nama...")
-                            || String.valueOf(textPass.getPassword()).equals("Pass")
-                            || textAddress.getText().equals("Silakan masukkan alamat...")
-                            || textPhone.getText().equals("Silakan masukkan no. HP...")
-                    ) {
-                        String message = "Silakan isi data Anda dengan benar!";
-                        validation(message);
-
-                        // Validate the password length
-                    } else if (textPass.getPassword().length < 8) {
-                        String message = "Password harus memiliki minimal 8 karakter";
-                        validation(message);
-
-                        // Validate all form data
-                    } else if (textName.getText().equals("")
-                            || textPass.getPassword().equals("")
-                            || textAddress.getText().equals("")
-                            || textPhone.getText().equals("")) {
-
-                        String message = "Silakan isi data Anda dengan benar!";
-                        validation(message);
-
-                        // If all forms are filled, POST data to database
-                    } else {
-                        Random random = new Random();
-                        int auth_token = random.nextInt(10000000);
-                        int user_type = 0;
-
-                        // Validate the user_type as "Admin" or "Customer"
-                        if (comboType.getSelectedItem().toString().equals("Admin")) {
-                            user_type = 1;
-                        } else if (comboType.getSelectedItem().toString().equals("Customer")) {
-                            user_type = 2;
-                        }
-
-                        // POST the Admin type user data
-                        if (user_type == 1) {
-                            User admin = new Admin(
-                                    textName.getText().toLowerCase(),
-                                    String.valueOf(textPass.getPassword()),
-                                    textAddress.getText(),
-                                    textPhone.getText(),
-                                    auth_token,
-                                    0,
-                                    1,
-                                    0
-                            );
-
-                            foodiez.addUser(admin);
-
-                            try {
-                                String insertQuery = "INSERT INTO m_user(user_name, user_pass, user_address, user_phone, user_type, auth_token, status) VALUES(?, ?, ?, ?, ?, ?, ?)";
-
-                                PreparedStatement pstate = conn.prepareStatement(insertQuery);
-                                pstate.setString(1, textName.getText().toLowerCase());
-                                pstate.setString(2, String.valueOf(textPass.getPassword()));
-                                pstate.setString(3, textAddress.getText());
-                                pstate.setString(4, textPhone.getText());
-                                pstate.setInt(5, user_type);
-                                pstate.setInt(6, auth_token);
-                                pstate.setInt(7, 0);
-
-                                int rowAffected = pstate.executeUpdate();
-
-                                if (rowAffected > 0) {
-                                    System.out.println("Insert successfull");
-
-                                    JOptionPane.showMessageDialog(
-                                            this,
-                                            "Akun Anda berhasil dibuat! Silakan sign-in untuk masuk ke aplikasi menggunakan akun Anda",
-                                            "Register",
-                                            JOptionPane.INFORMATION_MESSAGE
-                                    );
-                                    this.goToLogin();
-                                }
-                            } catch (SQLException e) {
-                                System.out.println(e.getMessage());
-                            }
-                            // POST the Customer type user data
-                        } else if (user_type == 2) {
-                            User customer = new Customer(
-                                    textName.getText().toLowerCase(),
-                                    String.valueOf(textPass.getPassword()),
-                                    textAddress.getText(),
-                                    textPhone.getText(),
-                                    0,
-                                    0,
-                                    2,
-                                    0
-                            );
-
-                            foodiez.addUser(customer);
-
-                            try {
-                                String insertQuery = "INSERT INTO " +
-                                        "m_user(user_name, user_pass, user_address, user_phone, user_type, auth_token, status, user_saldo) " +
-                                        "VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
-
-                                PreparedStatement pstate = conn.prepareStatement(insertQuery);
-                                pstate.setString(1, textName.getText().toLowerCase());
-                                pstate.setString(2, String.valueOf(textPass.getPassword()));
-                                pstate.setString(3, textAddress.getText());
-                                pstate.setString(4, textPhone.getText());
-                                pstate.setInt(5, user_type);
-                                pstate.setInt(6, 0);
-                                pstate.setInt(7, 0);
-                                pstate.setInt(8, 0);
-
-                                int rowAffected = pstate.executeUpdate();
-
-                                if (rowAffected > 0) {
-                                    System.out.println("Insert successfull");
-
-                                    JOptionPane.showMessageDialog(
-                                            this,
-                                            "Akun Anda berhasil dibuat! Silakan sign-in untuk masuk ke aplikasi menggunakan akun Anda",
-                                            "Register",
-                                            JOptionPane.INFORMATION_MESSAGE
-                                    );
-                                    this.goToLogin();
-                                }
-                            } catch (SQLException e) {
-                                System.out.println(e.getMessage());
-                            }
-                        }
-                    }
-                }
-            } else {
-                // Validate all form data
-                if (textName.getText().equals("Silakan masukkan nama...")
-                        || String.valueOf(textPass.getPassword()).equals("Pass")
-                        || textAddress.getText().equals("Silakan masukkan alamat...")
-                        || textPhone.getText().equals("Silakan masukkan no. HP...")
-                ) {
-                    String message = "Silakan isi data Anda dengan benar!";
-                    validation(message);
-
-                    // Validate the password length
-                } else if (textPass.getPassword().length < 8) {
-                    String message = "Password harus memiliki minimal 8 karakter";
-                    validation(message);
-
-                    // Validate all form data
-                } else if (textName.getText().equals("")
-                        || textPass.getPassword().equals("")
-                        || textAddress.getText().equals("")
-                        || textPhone.getText().equals("")) {
-
-                    String message = "Silakan isi data Anda dengan benar!";
-                    validation(message);
-
-                    // If all forms are filled, POST data to database
-                } else {
-                    Random random = new Random();
-                    int auth_token = random.nextInt(10000000);
-                    int user_type = 0;
-
-                    // Validate the user_type as "Admin" or "Customer"
-                    if (comboType.getSelectedItem().toString().equals("Admin")) {
-                        user_type = 1;
-                    } else if (comboType.getSelectedItem().toString().equals("Customer")) {
-                        user_type = 2;
-                    }
-
-                    // POST the Admin type user data
-                    if (user_type == 1) {
-                        User admin = new Admin(
-                                textName.getText().toLowerCase(),
-                                String.valueOf(textPass.getPassword()),
-                                textAddress.getText(),
-                                textPhone.getText(),
-                                auth_token,
-                                0,
-                                1,
-                                0
-                        );
-
-                        foodiez.addUser(admin);
-
-                        try {
-                            String insertQuery = "INSERT INTO m_user(user_name, user_pass, user_address, user_phone, user_type, auth_token, status) VALUES(?, ?, ?, ?, ?, ?, ?)";
-
-                            PreparedStatement pstate = conn.prepareStatement(insertQuery);
-                            pstate.setString(1, textName.getText().toLowerCase());
-                            pstate.setString(2, String.valueOf(textPass.getPassword()));
-                            pstate.setString(3, textAddress.getText());
-                            pstate.setString(4, textPhone.getText());
-                            pstate.setInt(5, user_type);
-                            pstate.setInt(6, auth_token);
-                            pstate.setInt(7, 0);
-
-                            int rowAffected = pstate.executeUpdate();
-
-                            if (rowAffected > 0) {
-                                System.out.println("Insert successfull");
-
-                                JOptionPane.showMessageDialog(
-                                        this,
-                                        "Akun Anda berhasil dibuat! Silakan sign-in untuk masuk ke aplikasi menggunakan akun Anda",
-                                        "Register",
-                                        JOptionPane.INFORMATION_MESSAGE
-                                );
-                                this.goToLogin();
-                            }
-                        } catch (SQLException e) {
-                            System.out.println(e.getMessage());
-                        }
-
-                        // POST the Customer type user data
-                    } else if (user_type == 2) {
-                        User customer = new Customer(
-                                textName.getText().toLowerCase(),
-                                String.valueOf(textPass.getPassword()),
-                                textAddress.getText(),
-                                textPhone.getText(),
-                                0,
-                                0,
-                                2,
-                                0
-                        );
-
-                        foodiez.addUser(customer);
-
-                        try {
-                            String insertQuery = "INSERT INTO " +
-                                    "m_user(user_name, user_pass, user_address, user_phone, user_type, auth_token, status, user_saldo) " +
-                                    "VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
-
-                            PreparedStatement pstate = conn.prepareStatement(insertQuery);
-                            pstate.setString(1, textName.getText().toLowerCase());
-                            pstate.setString(2, String.valueOf(textPass.getPassword()));
-                            pstate.setString(3, textAddress.getText());
-                            pstate.setString(4, textPhone.getText());
-                            pstate.setInt(5, user_type);
-                            pstate.setInt(6, 0);
-                            pstate.setInt(7, 0);
-                            pstate.setInt(8, 0);
-
-                            int rowAffected = pstate.executeUpdate();
-
-                            if (rowAffected > 0) {
-                                System.out.println("Insert successfull");
-
-                                JOptionPane.showMessageDialog(
-                                        this,
-                                        "Akun Anda berhasil dibuat! Silakan sign-in untuk masuk ke aplikasi menggunakan akun Anda",
-                                        "Register",
-                                        JOptionPane.INFORMATION_MESSAGE
-                                );
-                                this.goToLogin();
-                            }
-                        } catch (SQLException e) {
-                            System.out.println(e.getMessage());
-                        }
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
+        String getType = comboType.getSelectedItem().toString();
+        foodiez.userRegistration(
+                this,
+                this,
+                textName.getText(),
+                String.valueOf(textPass.getPassword()),
+                textAddress.getText(),
+                textPhone.getText(),
+                getType
+        );
     }//GEN-LAST:event_btnRegisterActionPerformed
 
     private void labelSigninMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_labelSigninMouseClicked
@@ -587,11 +264,6 @@ public class Register extends JFrame {
             textName.setText("");
         }
     }//GEN-LAST:event_textNameMouseClicked
-
-    private void validation(String message) {
-        System.out.println("Debug message: " + message);
-        JOptionPane.showMessageDialog(this, message, "Register", JOptionPane.ERROR_MESSAGE);
-    }
 
     private void goToLogin() {
         Login login = new Login();

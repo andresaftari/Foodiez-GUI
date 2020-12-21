@@ -5,8 +5,6 @@ package model;
  * @author andre
  */
 public class Admin extends User {
-    private int auth_token;
-
     public Admin(
             String user_name,
             String user_pass,
@@ -23,14 +21,6 @@ public class Admin extends User {
         this.user_address = user_address;
         this.user_phone = user_phone;
         this.user_type = user_type;
-        this.auth_token = auth_token;
         this.status = login;
-    }
-
-    public int getAuth_token() {
-        return auth_token;
-    }
-    public void setAuth_token(int auth_token) {
-        this.auth_token = auth_token;
     }
 }

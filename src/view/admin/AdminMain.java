@@ -3,14 +3,11 @@ package view.admin;
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 import controller.DBConn;
 import controller.Foodiez;
-import model.Product;
-import view.auth.Login;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
-import java.sql.*;
 
 import static java.awt.EventQueue.invokeLater;
 import static java.util.logging.Level.SEVERE;
@@ -66,91 +63,7 @@ public class AdminMain extends JFrame {
         columnModel.getColumn(3).setCellRenderer(cellRender);
         columnModel.getColumn(4).setCellRenderer(cellRender);
 
-        this.loadData();
-    }
-
-    private void loadData() {
-        try {
-            Connection conn = data.getConnection();
-            String query = "SELECT * FROM m_product";
-
-            Statement state = conn.createStatement();
-            ResultSet rset = state.executeQuery(query);
-
-            while (rset.next()) {
-                String productName = rset.getString("product_name");
-                String productDesc = rset.getString("product_desc");
-                int productQty = rset.getInt("product_qty");
-                int productPrice = rset.getInt("product_price");
-                int productStatus = rset.getInt("is_available");
-
-                foodiez.addProduct(new Product(
-                        productName,
-                        productDesc,
-                        productQty,
-                        productStatus,
-                        productPrice
-                ));
-
-                int index = foodiez.getProductList().size() - 1;
-
-                tableModel.addRow(new Object[]{
-                        foodiez.getProductList().get(index).getProduct_name(),
-                        foodiez.getProductList().get(index).getProduct_price(),
-                        foodiez.getProductList().get(index).getProduct_desc(),
-                        foodiez.getProductList().get(index).getProduct_qty(),
-                        foodiez.getProductList().get(index).getAvailableStatus()
-                });
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
-    private void goToLogin() {
-        Login login = new Login();
-
-        this.dispose();
-        login.setSize(1920, 1080);
-        login.setVisible(true);
-    }
-
-    private void authorizationCheck() {
-        try {
-            Connection conn = data.getConnection();
-            String getQuery = "SELECT * FROM m_user WHERE user_name=?";
-
-            PreparedStatement ps = conn.prepareStatement(getQuery);
-            ps.setString(1, current_user);
-
-            // Database connections
-            ResultSet rs = ps.executeQuery();
-            int user_state = 0;
-
-            while (rs.next()) {
-                user_state = rs.getInt("status");
-            }
-
-            if (current_user == null || current_user.equals("") || current_user.equals("null") || user_state == 0) {
-                JOptionPane.showMessageDialog(
-                        this,
-                        "Akses ditolak karena Anda belum melakukan login sebagai Admin!",
-                        "Authorization Check",
-                        JOptionPane.WARNING_MESSAGE
-                );
-                this.goToLogin();
-            } else if (user_state == 2) {
-                JOptionPane.showMessageDialog(
-                        this,
-                        "Akses ditolak karena akun Anda sedang di-suspend!",
-                        "Authorization Check",
-                        JOptionPane.WARNING_MESSAGE
-                );
-                this.goToLogin();
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
+        foodiez.loadProductData(tableModel);
     }
 
     @SuppressWarnings("unchecked")
@@ -231,45 +144,45 @@ public class AdminMain extends JFrame {
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jSeparator1)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(btnLogout, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(12, 12, 12)
-                        .addComponent(jSeparator2))
-                    .addComponent(btnToTransaction, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnUserManagement, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jSeparator3)))
-                .addContainerGap())
+                jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addContainerGap()
+                                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(jSeparator1)
+                                                        .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addContainerGap()
+                                                .addComponent(btnLogout, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addGap(12, 12, 12)
+                                                .addComponent(jSeparator2))
+                                        .addComponent(btnToTransaction, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(btnUserManagement, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
+                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addContainerGap()
+                                                .addComponent(jSeparator3)))
+                                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnUserManagement, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(btnToTransaction, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnLogout, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jLabel3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnUserManagement, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnToTransaction, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnLogout, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap())
         );
 
         jLabel1.setFont(new java.awt.Font("Rockwell", 0, 24)); // NOI18N
@@ -283,47 +196,47 @@ public class AdminMain extends JFrame {
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 756, Short.MAX_VALUE)
-                .addGap(208, 208, 208))
-            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 756, Short.MAX_VALUE)
+                                .addGap(208, 208, 208))
+                        .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel2)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel2)
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         tableProduct.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
-            },
-            new String [] {
-                "Nama Produk", "Harga Produk", "Detail Produk", "Stok Produk", "Status Ketersediaan"
-            }
+                new Object[][]{
+                        {null, null, null, null, null},
+                        {null, null, null, null, null},
+                        {null, null, null, null, null},
+                        {null, null, null, null, null},
+                        {null, null, null, null, null}
+                },
+                new String[]{
+                        "Nama Produk", "Harga Produk", "Detail Produk", "Stok Produk", "Status Ketersediaan"
+                }
         ) {
-            Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class
+            Class[] types = new Class[]{
+                    java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class
             };
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
+            boolean[] canEdit = new boolean[]{
+                    false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
+                return types[columnIndex];
             }
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
+                return canEdit[columnIndex];
             }
         });
         tableProduct.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
@@ -386,85 +299,85 @@ public class AdminMain extends JFrame {
 
         labelStatus.setText("Status Ketersediaan");
 
-        comboStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Ada", "Pre Order", "Habis" }));
+        comboStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"Ada", "Pre Order", "Habis"}));
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(textQuantity)
-                    .addComponent(textPrice)
-                    .addComponent(textDesc, javax.swing.GroupLayout.DEFAULT_SIZE, 473, Short.MAX_VALUE)
-                    .addComponent(textName)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(labelStatus)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(comboStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnEditProduct, javax.swing.GroupLayout.PREFERRED_SIZE, 473, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnDeleteProduct, javax.swing.GroupLayout.PREFERRED_SIZE, 473, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addComponent(btnAddProduct, javax.swing.GroupLayout.PREFERRED_SIZE, 473, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())))
+                jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(textQuantity)
+                                        .addComponent(textPrice)
+                                        .addComponent(textDesc, javax.swing.GroupLayout.DEFAULT_SIZE, 473, Short.MAX_VALUE)
+                                        .addComponent(textName)
+                                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                                .addComponent(labelStatus)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(comboStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(0, 0, Short.MAX_VALUE)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(btnEditProduct, javax.swing.GroupLayout.PREFERRED_SIZE, 473, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(btnDeleteProduct, javax.swing.GroupLayout.PREFERRED_SIZE, 473, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                                .addComponent(btnAddProduct, javax.swing.GroupLayout.PREFERRED_SIZE, 473, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addContainerGap())))
         );
         jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(btnAddProduct, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnEditProduct, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(12, 12, 12))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(textName)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(textPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(12, 12, 12)
-                        .addComponent(textDesc, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(textQuantity, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(labelStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(comboStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(btnDeleteProduct, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(41, Short.MAX_VALUE))
+                jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                                .addComponent(btnAddProduct, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(btnEditProduct, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(12, 12, 12))
+                                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                                .addComponent(textName)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(textPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(12, 12, 12)
+                                                .addComponent(textDesc, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                                .addComponent(textQuantity, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(labelStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(comboStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                        .addComponent(btnDeleteProduct, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addContainerGap(41, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jScrollPane1)
+                                        .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap())
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addContainerGap())
         );
 
         pack();
@@ -473,124 +386,16 @@ public class AdminMain extends JFrame {
 
     private void btnAddProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddProductActionPerformed
         try {
-            String name = "", desc = "";
-            Connection conn = data.getConnection();
-
-            if (!foodiez.getProductList().isEmpty()) {
-                String checkQuery = "SELECT * FROM m_product";
-
-                Statement st = conn.createStatement();
-                ResultSet rs = st.executeQuery(checkQuery);
-
-                if (rs.next()) {
-                    name = rs.getString("product_name");
-                    desc = rs.getString("product_desc");
-                }
-
-                if (textName.getText().equals(name) && textDesc.getText().equals(desc)) {
-                    JOptionPane.showMessageDialog(
-                            this,
-                            "Data produk sudah ada, silakan di-update!",
-                            "Add Product",
-                            JOptionPane.WARNING_MESSAGE
-                    );
-                } else {
-                    String insertQuery = "INSERT INTO m_product(product_name, product_desc, product_qty, product_price, is_available) VALUES (?, ?, ?, ?, ?)";
-
-                    int status = 0;
-                    switch (comboStatus.getSelectedItem().toString()) {
-                        case "Ada":
-                            status = 1;
-                            break;
-                        case "Pre Order":
-                            status = 2;
-                            break;
-                        case "Habis":
-                            status = 0;
-                            break;
-                    }
-
-                    PreparedStatement ps = conn.prepareStatement(insertQuery);
-                    ps.setString(1, textName.getText());
-                    ps.setString(2, textDesc.getText());
-                    ps.setInt(3, Integer.parseInt(textQuantity.getText()));
-                    ps.setInt(4, Integer.parseInt(textPrice.getText()));
-                    ps.setInt(5, status);
-                    ps.executeUpdate();
-
-                    foodiez.addProduct(new Product(
-                            textName.getText(),
-                            textDesc.getText(),
-                            Integer.parseInt(textQuantity.getText()),
-                            status,
-                            Integer.parseInt(textPrice.getText())
-                    ));
-                    int index = foodiez.getProductList().size() - 1;
-
-                    tableModel.addRow(new Object[]{
-                            foodiez.getProductList().get(index).getProduct_name(),
-                            foodiez.getProductList().get(index).getProduct_price(),
-                            foodiez.getProductList().get(index).getProduct_desc(),
-                            foodiez.getProductList().get(index).getProduct_qty(),
-                            foodiez.getProductList().get(index).getAvailableStatus()
-                    });
-
-                    JOptionPane.showMessageDialog(
-                            this,
-                            "Produk berhasil ditambahkan!",
-                            "Admin Page",
-                            JOptionPane.INFORMATION_MESSAGE
-                    );
-                }
-            } else {
-                String insertQuery = "INSERT INTO m_product(product_name, product_desc, product_qty, product_price, is_available) VALUES (?, ?, ?, ?, ?)";
-
-                int status = 0;
-                switch (comboStatus.getSelectedItem().toString()) {
-                    case "Ada":
-                        status = 1;
-                        break;
-                    case "Pre Order":
-                        status = 2;
-                        break;
-                    case "Habis":
-                        status = 0;
-                        break;
-                }
-
-                PreparedStatement ps = conn.prepareStatement(insertQuery);
-                ps.setString(1, textName.getText());
-                ps.setString(2, textDesc.getText());
-                ps.setInt(3, Integer.parseInt(textQuantity.getText()));
-                ps.setInt(4, Integer.parseInt(textPrice.getText()));
-                ps.setInt(5, status);
-                ps.executeUpdate();
-
-                foodiez.addProduct(new Product(
-                        textName.getText(),
-                        textDesc.getText(),
-                        Integer.parseInt(textQuantity.getText()),
-                        status,
-                        Integer.parseInt(textPrice.getText())
-                ));
-                int index = foodiez.getProductList().size() - 1;
-
-                tableModel.addRow(new Object[]{
-                        foodiez.getProductList().get(index).getProduct_name(),
-                        foodiez.getProductList().get(index).getProduct_price(),
-                        foodiez.getProductList().get(index).getProduct_desc(),
-                        foodiez.getProductList().get(index).getProduct_qty(),
-                        foodiez.getProductList().get(index).getAvailableStatus()
-                });
-
-                JOptionPane.showMessageDialog(
-                        this,
-                        "Produk berhasil ditambahkan!",
-                        "Admin Page",
-                        JOptionPane.INFORMATION_MESSAGE
-                );
-            }
-        } catch (SQLException e) {
+            foodiez.insertProductData(
+                    this,
+                    textName.getText(),
+                    textDesc.getText(),
+                    comboStatus.getSelectedItem().toString(),
+                    textQuantity.getText(),
+                    textPrice.getText(),
+                    tableModel
+            );
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }//GEN-LAST:event_btnAddProductActionPerformed
@@ -625,31 +430,11 @@ public class AdminMain extends JFrame {
     }//GEN-LAST:event_tableProductMouseClicked
 
     private void btnLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogoutActionPerformed
-        try {
-            Connection conn = data.getConnection();
-            String getQuery = "SELECT * FROM m_user WHERE user_name=?";
-
-            PreparedStatement ps = conn.prepareStatement(getQuery);
-            ps.setString(1, current_user);
-
-            // Database connections
-            ps.executeQuery();
-            String updateQuery = "UPDATE m_user SET status = 0 WHERE user_name=?";
-
-            PreparedStatement pstate = conn.prepareStatement(updateQuery);
-            pstate.setString(1, current_user);
-            pstate.executeUpdate();
-
-            JOptionPane.showMessageDialog(
-                    this,
-                    current_user + " berhasil logout!",
-                    "Admin Page",
-                    1
-            );
-            this.goToLogin();
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
+        foodiez.logoutAccount(
+                this,
+                this,
+                current_user
+        );
     }//GEN-LAST:event_btnLogoutActionPerformed
 
     private void btnToTransactionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnToTransactionActionPerformed
@@ -700,43 +485,17 @@ public class AdminMain extends JFrame {
             }
 
             try {
-                Connection conn = data.getConnection();
-                String setQuery = "UPDATE m_product "
-                        + "SET product_name=?, product_desc=?, product_qty=?, product_price=?, is_available=? "
-                        + "WHERE product_name=?";
-
-                PreparedStatement psUpdate = conn.prepareStatement(setQuery);
-
-                psUpdate.setString(1, getEditName);
-                psUpdate.setString(2, getEditDesc);
-                psUpdate.setInt(3, getEditQuantity);
-                psUpdate.setInt(4, getEditPrice);
-                psUpdate.setInt(5, getIs_available);
-                psUpdate.setString(6, productName);
-                int affected = psUpdate.executeUpdate();
-
-                if (affected > 0) {
-                    if (getEditQuantity == 0) {
-                        String setStatus = "UPDATE m_product SET is_available = 0 WHERE product_name=?";
-
-                        PreparedStatement pStatus = conn.prepareStatement(setStatus);
-                        pStatus.setString(1, getEditName);
-                        pStatus.executeUpdate();
-                    }
-
-                    JOptionPane.showMessageDialog(
-                            this,
-                            "Pengubahan data produk berhasil!",
-                            "Admin Page",
-                            1
-                    );
-                }
-                foodiez.getProductList().clear();
-
-                tableModel.setRowCount(0);
-                tableModel.fireTableRowsDeleted(0, foodiez.getProductList().size());
-                this.loadData();
-            } catch (SQLException e) {
+                foodiez.updateProductData(
+                        this,
+                        getEditName,
+                        getEditDesc,
+                        getIs_available,
+                        getEditQuantity,
+                        getEditPrice,
+                        tableModel,
+                        productName
+                );
+            } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
         }
@@ -747,32 +506,12 @@ public class AdminMain extends JFrame {
         String productName = foodiez.getProductList().get(row).getProduct_name();
 
         try {
-            Connection conn = data.getConnection();
-            String removeForeignKeyCheck = "SET foreign_key_checks = 0";
-
-            Statement st = conn.createStatement();
-            st.executeQuery(removeForeignKeyCheck);
-
-            String removeQuery = "DELETE FROM m_product WHERE product_name=?";
-
-            PreparedStatement psDel = conn.prepareStatement(removeQuery);
-            psDel.setString(1, productName);
-            int affected = psDel.executeUpdate();
-
-            if (affected > 0) {
-                JOptionPane.showMessageDialog(
-                        this,
-                        "Penghapusan data produk berhasil!",
-                        "Admin Page",
-                        1
-                );
-            }
-            foodiez.getProductList().clear();
-
-            tableModel.setRowCount(0);
-            tableModel.fireTableRowsDeleted(0, foodiez.getProductList().size());
-            this.loadData();
-        } catch (SQLException e) {
+            foodiez.deleteProductData(
+                    this,
+                    productName,
+                    tableModel
+            );
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }//GEN-LAST:event_btnDeleteProductActionPerformed
@@ -825,7 +564,7 @@ public class AdminMain extends JFrame {
             app.setTitle("Foodiez - Admin app");
             app.setSize(1920, 1080);
             app.setVisible(true);
-            app.authorizationCheck();
+            app.foodiez.authorizationCheck(app, app, current_user);
         });
     }
 

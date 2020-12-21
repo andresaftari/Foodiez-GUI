@@ -24,16 +24,8 @@ public class Product {
         return product_name;
     }
 
-    public void setProduct_name(String product_name) {
-        this.product_name = product_name;
-    }
-
     public String getProduct_desc() {
         return product_desc;
-    }
-
-    public void setProduct_desc(String product_desc) {
-        this.product_desc = product_desc;
     }
 
     public int getProduct_qty() {
@@ -71,9 +63,5 @@ public class Product {
 
     public int getProduct_price() {
         return product_price;
-    }
-
-    public void setProduct_price(int product_price) {
-        this.product_price = product_price;
     }
 }
