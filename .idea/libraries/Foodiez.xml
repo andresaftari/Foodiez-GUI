@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Foodiez">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/dist/Foodiez.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
