@@ -517,27 +517,19 @@ public class AdminMain extends JFrame {
     }//GEN-LAST:event_btnDeleteProductActionPerformed
 
     private void textNameMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_textNameMouseClicked
-        if (textName.getText().equals("Nama Produk")) {
-            textName.setText("");
-        }
+        if (textName.getText().equals("Nama Produk")) textName.setText("");
     }//GEN-LAST:event_textNameMouseClicked
 
     private void textPriceMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_textPriceMouseClicked
-        if (textPrice.getText().equals("Harga Produk")) {
-            textPrice.setText("");
-        }
+        if (textPrice.getText().equals("Harga Produk")) textPrice.setText("");
     }//GEN-LAST:event_textPriceMouseClicked
 
     private void textDescMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_textDescMouseClicked
-        if (textDesc.getText().equals("Deskripsi Produk")) {
-            textDesc.setText("");
-        }
+        if (textDesc.getText().equals("Deskripsi Produk")) textDesc.setText("");
     }//GEN-LAST:event_textDescMouseClicked
 
     private void textQuantityMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_textQuantityMouseClicked
-        if (textQuantity.getText().equals("Stok Produk")) {
-            textQuantity.setText("");
-        }
+        if (textQuantity.getText().equals("Stok Produk")) textQuantity.setText("");
     }//GEN-LAST:event_textQuantityMouseClicked
 
     public static void main(String[] args) {

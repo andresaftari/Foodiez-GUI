@@ -68,18 +68,7 @@ public class CustomerMain extends JFrame {
 
         labelTotal.setText("Total Harga: Rp.0");
         foodiez.loadProductData(tableModel);
-        this.loadSaldo();
-    }
-
-    private void loadSaldo() {
-        try {
-            foodiez.loadSaldoUser(
-                    current_user,
-                    labelSaldo
-            );
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+        foodiez.loadSaldoUser(current_user, labelSaldo);
     }
 
     @SuppressWarnings("unchecked")
@@ -412,9 +401,7 @@ public class CustomerMain extends JFrame {
     }//GEN-LAST:event_tableProductMouseClicked
 
     private void textQuantityMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_textQuantityMouseClicked
-        if (textQuantity.getText().equals("Jumlah Beli")) {
-            textQuantity.setText("");
-        }
+        if (textQuantity.getText().equals("Jumlah Beli")) textQuantity.setText("");
     }//GEN-LAST:event_textQuantityMouseClicked
 
     public static void main(String[] args) {

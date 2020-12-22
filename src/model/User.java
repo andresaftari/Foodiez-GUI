@@ -9,7 +9,7 @@ public abstract class User {
     protected String user_address;
     protected String user_phone;
     protected int user_token, saldo, status;
-    protected int user_type, order_code; // user_type: 1 = Admin, user_type: 2 = Customer
+    protected int user_type;
 
     public User(String user_name) {
         this.user_name = user_name;

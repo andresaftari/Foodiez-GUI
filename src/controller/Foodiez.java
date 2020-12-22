@@ -28,7 +28,7 @@ public class Foodiez {
     }
 
     // Check the database connection
-    public void databaseConnectionCheck() {
+    public void databaseConnectionCheck(Component parentComponent) {
         try {
             Connection conn = data.getConnection();
             String getQuery = "SELECT * FROM m_user";
@@ -50,6 +50,12 @@ public class Foodiez {
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+            JOptionPane.showMessageDialog(
+                    parentComponent,
+                    "Failed to initialize database connection!\n" + e.getMessage(),
+                    "Foodiez",
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
     }
 
@@ -160,6 +166,12 @@ public class Foodiez {
                                 }
                             } catch (SQLException e) {
                                 System.out.println(e.getMessage());
+                                JOptionPane.showMessageDialog(
+                                        parentComponent,
+                                        "Gagal membuat akun! Periksa lagi koneksi Anda!",
+                                        "Register",
+                                        JOptionPane.ERROR_MESSAGE
+                                );
                             }
                             // POST the Customer type user data
                         } else if (user_type == 2) {
@@ -205,6 +217,12 @@ public class Foodiez {
                                 }
                             } catch (SQLException e) {
                                 System.out.println(e.getMessage());
+                                JOptionPane.showMessageDialog(
+                                        parentComponent,
+                                        "Gagal membuat akun! Periksa lagi koneksi Anda!",
+                                        "Register",
+                                        JOptionPane.ERROR_MESSAGE
+                                );
                             }
                         }
                     }
@@ -276,6 +294,12 @@ public class Foodiez {
                             }
                         } catch (SQLException e) {
                             System.out.println(e.getMessage());
+                            JOptionPane.showMessageDialog(
+                                    parentComponent,
+                                    "Gagal membuat akun! Periksa lagi koneksi Anda!",
+                                    "Register",
+                                    JOptionPane.ERROR_MESSAGE
+                            );
                         }
 
                         // POST the Customer type user data
@@ -322,6 +346,12 @@ public class Foodiez {
                             }
                         } catch (SQLException e) {
                             System.out.println(e.getMessage());
+                            JOptionPane.showMessageDialog(
+                                    parentComponent,
+                                    "Gagal membuat akun! Periksa lagi koneksi Anda!",
+                                    "Register",
+                                    JOptionPane.ERROR_MESSAGE
+                            );
                         }
                     }
                 }
@@ -406,6 +436,12 @@ public class Foodiez {
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+            JOptionPane.showMessageDialog(
+                    parentComponent,
+                    "Gagal melakukan Sign-in! Periksa lagi koneksi Anda!",
+                    "Login",
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
     }
 
@@ -625,6 +661,12 @@ public class Foodiez {
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+            JOptionPane.showMessageDialog(
+                    parentComponent,
+                    "Gagal melakukan account authorization! Periksa lagi koneksi Anda!",
+                    "Foodiez",
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
     }
 
@@ -692,14 +734,14 @@ public class Foodiez {
                             status,
                             Integer.parseInt(textPrice)
                     ));
-                    int index = getProductList().size() - 1;
+                    int index = productList.size() - 1;
 
                     tableModel.addRow(new Object[]{
-                            getProductList().get(index).getProduct_name(),
-                            getProductList().get(index).getProduct_price(),
-                            getProductList().get(index).getProduct_desc(),
-                            getProductList().get(index).getProduct_qty(),
-                            getProductList().get(index).getAvailableStatus()
+                            productList.get(index).getProduct_name(),
+                            productList.get(index).getProduct_price(),
+                            productList.get(index).getProduct_desc(),
+                            productList.get(index).getProduct_qty(),
+                            productList.get(index).getAvailableStatus()
                     });
 
                     JOptionPane.showMessageDialog(
@@ -741,14 +783,14 @@ public class Foodiez {
                         status,
                         Integer.parseInt(textPrice)
                 ));
-                int index = getProductList().size() - 1;
+                int index = productList.size() - 1;
 
                 tableModel.addRow(new Object[]{
-                        getProductList().get(index).getProduct_name(),
-                        getProductList().get(index).getProduct_price(),
-                        getProductList().get(index).getProduct_desc(),
-                        getProductList().get(index).getProduct_qty(),
-                        getProductList().get(index).getAvailableStatus()
+                        productList.get(index).getProduct_name(),
+                        productList.get(index).getProduct_price(),
+                        productList.get(index).getProduct_desc(),
+                        productList.get(index).getProduct_qty(),
+                        productList.get(index).getAvailableStatus()
                 });
 
                 JOptionPane.showMessageDialog(
@@ -760,6 +802,12 @@ public class Foodiez {
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+            JOptionPane.showMessageDialog(
+                    parentComponent,
+                    "Gagal menambahkan produk baru! Periksa lagi koneksi Anda!",
+                    "Admin Page",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
         }
     }
 
@@ -857,7 +905,7 @@ public class Foodiez {
                 pSaldo.executeUpdate();
 
                 addTransaction(new Transaction(order_code, current_user, productName));
-                getProductList().get(tableRow).setProduct_qty(stok);
+                productList.get(tableRow).setProduct_qty(stok);
                 tableModel.setRowCount(0);
 
                 userList.forEach(it -> {
@@ -892,6 +940,12 @@ public class Foodiez {
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+            JOptionPane.showMessageDialog(
+                    parentComponent,
+                    "Gagal menjalankan transaksi! Periksa lagi koneksi Anda!",
+                    "Foodiez Customer",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
         }
     }
 
@@ -918,6 +972,12 @@ public class Foodiez {
             );
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+            JOptionPane.showMessageDialog(
+                    parentComponent,
+                    "Gagal melakukan perubahan! Periksa lagi koneksi Anda!",
+                    "Admin Page",
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
     }
 
@@ -942,6 +1002,12 @@ public class Foodiez {
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+            JOptionPane.showMessageDialog(
+                    parentComponent,
+                    "Gagal melakukan perubahan! Periksa lagi koneksi Anda!",
+                    "Customer Page",
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
 
         try {
@@ -955,13 +1021,21 @@ public class Foodiez {
 
             JOptionPane.showMessageDialog(
                     parentComponent,
-                    "Isi saldo berhasil!"
+                    "Isi saldo berhasil!",
+                    "Customer Page",
+                    JOptionPane.INFORMATION_MESSAGE
             );
 
             labelSaldo.setText("");
             this.loadSaldoUser(current_user, labelSaldo);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+            JOptionPane.showMessageDialog(
+                    parentComponent,
+                    "Gagal melakukan perubahan! Periksa lagi koneksi Anda!",
+                    "Customer Page",
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
     }
 
@@ -1008,13 +1082,19 @@ public class Foodiez {
                         1
                 );
             }
-            getProductList().clear();
+            productList.clear();
 
             tableModel.setRowCount(0);
             tableModel.fireTableRowsDeleted(0, productList.size());
             loadProductData(tableModel);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+            JOptionPane.showMessageDialog(
+                    parentComponent,
+                    "Gagal melakukan perubahan! Periksa lagi koneksi Anda!",
+                    "Admin Page",
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
     }
 
@@ -1052,6 +1132,12 @@ public class Foodiez {
             loadProductData(tableModel);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+            JOptionPane.showMessageDialog(
+                    parentComponent,
+                    "Gagal melakukan perubahan! Periksa lagi koneksi Anda!",
+                    "Admin Page",
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
     }
 
@@ -1085,6 +1171,12 @@ public class Foodiez {
             this.goToLogin(jFrame);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+            JOptionPane.showMessageDialog(
+                    parentComponent,
+                    "Gagal melakukan Sign-out akun! Periksa lagi koneksi Anda!",
+                    "Foodiez",
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
     }
 
@@ -1122,10 +1214,6 @@ public class Foodiez {
 
     public ArrayList<User> getUserList() {
         return userList;
-    }
-
-    public ArrayList<Transaction> getTransactionList() {
-        return transactionList;
     }
 
     public ArrayList<Product> getProductList() {

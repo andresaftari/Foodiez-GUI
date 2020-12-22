@@ -24,7 +24,7 @@ public class Register extends JFrame {
         dbconn.db_connection(data);
 
         // Check database connection
-        foodiez.databaseConnectionCheck();
+        foodiez.databaseConnectionCheck(this);
         initComponents();
     }
 
@@ -248,21 +248,15 @@ public class Register extends JFrame {
     }//GEN-LAST:event_labelSigninMouseClicked
 
     private void textAddressMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_textAddressMouseClicked
-        if (textAddress.getText().equals("Silakan masukkan alamat...")) {
-            textAddress.setText("");
-        }
+        if (textAddress.getText().equals("Silakan masukkan alamat...")) textAddress.setText("");
     }//GEN-LAST:event_textAddressMouseClicked
 
     private void textPhoneMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_textPhoneMouseClicked
-        if (textPhone.getText().equals("Silakan masukkan no. HP...")) {
-            textPhone.setText("");
-        }
+        if (textPhone.getText().equals("Silakan masukkan no. HP...")) textPhone.setText("");
     }//GEN-LAST:event_textPhoneMouseClicked
 
     private void textNameMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_textNameMouseClicked
-        if (textName.getText().equals("Silakan masukkan nama...")) {
-            textName.setText("");
-        }
+        if (textName.getText().equals("Silakan masukkan nama...")) textName.setText("");
     }//GEN-LAST:event_textNameMouseClicked
 
     private void goToLogin() {

@@ -16,14 +16,14 @@ import static javax.swing.UIManager.*;
  */
 public class Login extends JFrame {
     private final Foodiez foodiez = new Foodiez();
-    private final MysqlDataSource data = new MysqlDataSource();
 
     public Login() {
         DBConn dbconn = new DBConn();
+        MysqlDataSource data = new MysqlDataSource();
         dbconn.db_connection(data);
 
         // Check database connection
-        foodiez.databaseConnectionCheck();
+        foodiez.databaseConnectionCheck(this);
         initComponents();
     }
 
@@ -207,9 +207,7 @@ public class Login extends JFrame {
     }//GEN-LAST:event_btnLoginActionPerformed
 
     private void textNameMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_textNameMouseClicked
-        if (textName.getText().equals("Silakan masukkan nama...")) {
-            textName.setText("");
-        }
+        if (textName.getText().equals("Silakan masukkan nama...")) textName.setText("");
     }//GEN-LAST:event_textNameMouseClicked
 
     public static void main(String[] args) {
