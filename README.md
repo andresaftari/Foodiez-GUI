@@ -8,7 +8,7 @@ Tugas Besar PBO - Foodiez App GUI
 
 3. Clone aplikasi ini menggunakan Git Bash atau langsung menggunakan VCS feature tersedia pada beberapa IDE 
 
-4. Nyalakan XAMPP dan buatlah database dengan nama db_pbo_tubes & dan buat **3 table (m_product, m_transaction, m_user)**
+4. Nyalakan XAMPP dan buatlah database dengan nama db_pbo_tubes
 
 5. Lalu import .sql file pada package src/db/.. ke dalam database baru
 
