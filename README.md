@@ -4,7 +4,7 @@ Tugas Besar PBO - Foodiez App GUI
 > Cara menggunakan
 1. Pastikan PC telah terinstalasi XAMPP control panel, Java Development Kit (JDK 15) dan Java Runtime Environment (JRE 8)
 
-2. Download MySQL JDBC dari tautan ini: https://drive.google.com/drive/folders/1S2XG8T5IVPIx0G4bEnHwRuJjuO5y9ZEX?usp=sharing 
+2. Download MySQL JDBC dari tautan ini: [https://drive.google.com/drive/folders/1S2XG8T5IVPIx0G4bEnHwRuJjuO5y9ZEX?usp=sharing ](https://drive.google.com/drive/folders/1ETJ-7r3ioU2xC3qmupF8Pe1L4vnRGpJ0?usp=sharing)
 
 3. Clone aplikasi ini menggunakan Git Bash atau langsung menggunakan VCS feature tersedia pada beberapa IDE 
 
